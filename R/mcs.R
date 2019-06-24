@@ -1,5 +1,21 @@
 
-
+#' The 'mcs()' helper function combines the 3-steps: simulate, calibrate, combine
+#'
+#' @param des_2be_cal a survey design object that is to be calibrated see \code{\link[survey]{design}}
+#' @param df_or_list_est_tot a single data.frame of estimated joint totals or list of data.frames of estimated marginal totals (and respective standard errors) see \code{\link[MultCal2Sim]{sim_tot_from_est}}
+#' @param form_outcome a formula of the outcome, whose total we want an improved MCS estimate of see \code{\link[MultCal2Sim]{cal_2_sim}}
+#' @param form_poststrat single formula of joint poststrata or list of formulas for marginal poststrata see \code{\link[MultCal2Sim]{cal_2_sim}}
+#' @param type_cal a character string for 'mcsp' or 'mcsr'
+#' @param num_sim the number of simulations to calibrate onto
+#' @param lgl_rej_neg_sim a logical whether to reject negative simulations
+#' @param parallel a logical whether to run in parallel using \code{\link[parallel]{parLapply}}
+#' @param num_core the number of cores for the parallel job
+#'
+#' @return a 1 row data.frame of the MCS estimate and its standard error
+#' @export
+#'
+#' @examples
+#'
 mcs = function(des_2be_cal,
                df_or_list_est_tot,
                form_outcome,
@@ -32,9 +48,9 @@ mcs = function(des_2be_cal,
     }
 
     if(parallel==TRUE){
-      cl <- makeCluster(getOption("cl.cores", num_core))
+      cl <- parallel::makeCluster(getOption("cl.cores", num_core))
       # calibrate
-      list_cal_out_joint = parLapply(cl = cl,
+      list_cal_out_joint = parallel::parLapply(cl = cl,
                                      X=list_sim_out_joint,
                                      fun=cal_2_sim,
                                      des_2be_cal=des_2be_cal,
@@ -73,9 +89,9 @@ mcs = function(des_2be_cal,
     }
 
     if(parallel==TRUE){
-      cl <- makeCluster(getOption("cl.cores", num_core))
+      cl <- parallel::makeCluster(getOption("cl.cores", num_core))
       # calibrate
-      list_cal_out_marg = parLapply(cl = cl,
+      list_cal_out_marg = parallel::parLapply(cl = cl,
                                     X=list_sim_out_marg,
                                     fun=cal_2_sim,
                                     des_2be_cal=des_2be_cal,

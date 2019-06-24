@@ -11,7 +11,7 @@ cal_2_sim(des_2be_cal, df_or_list_sim, form_outcome, form_poststrat, type_cal)
 
 \item{df_or_list_sim}{1 simulation of single data.frame (for joint) or single list of data.frames (for marginals)}
 
-\item{form_outcome}{formula for the outcome}
+\item{form_outcome}{a formula of the outcome, whose total we want an improved MCS estimate of}
 
 \item{form_poststrat}{single formula of joint poststrata or list of formulas for marginal poststrata}
 

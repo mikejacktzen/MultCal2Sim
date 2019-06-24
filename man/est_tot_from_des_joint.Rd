@@ -9,7 +9,7 @@ est_tot_from_des_joint(form_additive, design_refer)
 \arguments{
 \item{form_additive}{a formula with only right hand side additive terms representing joint totals}
 
-\item{design_refer}{a ?survey::design object that contains the survey data used to estimate the joint total(s)}
+\item{design_refer}{a survey.design object that contains the survey data used to estimate the joint total(s) \code{\link[survey]{svydesign}}}
 }
 \value{
 result is 'tidy' data frame, row is unique strata combo

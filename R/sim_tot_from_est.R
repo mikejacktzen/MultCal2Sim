@@ -3,8 +3,8 @@
 #' The sim_tot_from_est() function to simulate totals from pre-existing estimates
 #'
 #' @param df_or_list_est_tot a single data.frame of estimated joint totals or list of data.frames of estimated marginal totals (and respective standard errors)
-#' @param type_strata specify if joint (requires a dataframe) or marginal requires a list
-#' @param lgl_rej_neg_sim logical to reject negative simulations of totals
+#' @param type_strata specify if joint (requires a data.frame) or marginal requires a list
+#' @param lgl_rej_neg_sim a logical whether to reject negative simulations
 #'
 #' @return 1 simulation of either joint totals in a data.frame or marginal totals in a list of data.frames
 #' @export

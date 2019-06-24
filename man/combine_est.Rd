@@ -7,7 +7,7 @@
 combine_est(list_cal)
 }
 \arguments{
-\item{list_cal}{list containing intermediate estimates that have been calibrated by ?mult_cal}
+\item{list_cal}{list containing intermediate estimates that have been calibrated by \code{\link[MultCal2Sim]{mult_cal}}}
 }
 \value{
 a 1 row data.frame of the MCS estimate and its standard error

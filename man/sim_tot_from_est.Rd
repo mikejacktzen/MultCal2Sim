@@ -9,9 +9,9 @@ sim_tot_from_est(df_or_list_est_tot, type_strata, lgl_rej_neg_sim = TRUE)
 \arguments{
 \item{df_or_list_est_tot}{a single data.frame of estimated joint totals or list of data.frames of estimated marginal totals (and respective standard errors)}
 
-\item{type_strata}{specify if joint (requires a dataframe) or marginal requires a list}
+\item{type_strata}{specify if joint (requires a data.frame) or marginal requires a list}
 
-\item{lgl_rej_neg_sim}{logical to reject negative simulations of totals}
+\item{lgl_rej_neg_sim}{a logical whether to reject negative simulations}
 }
 \value{
 1 simulation of either joint totals in a data.frame or marginal totals in a list of data.frames

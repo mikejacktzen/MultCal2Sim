@@ -1,6 +1,6 @@
 #' The combine_est() function to combine intermediate calibrated estimates
 #'
-#' @param list_cal list containing intermediate estimates that have been calibrated by ?mult_cal
+#' @param list_cal list containing intermediate estimates that have been calibrated by \code{\link[MultCal2Sim]{mult_cal}}
 #'
 #' @return a 1 row data.frame of the MCS estimate and its standard error
 #' @export

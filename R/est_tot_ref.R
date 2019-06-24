@@ -2,7 +2,7 @@
 #' helper function to estimate joint totals from survey design object
 #'
 #' @param form_additive a formula with only right hand side additive terms representing joint totals
-#' @param design_refer a ?survey::design object that contains the survey data used to estimate the joint total(s)
+#' @param design_refer a survey.design object that contains the survey data used to estimate the joint total(s) \code{\link[survey]{svydesign}}
 #'
 #' @return result is 'tidy' data frame, row is unique strata combo
 #' @export

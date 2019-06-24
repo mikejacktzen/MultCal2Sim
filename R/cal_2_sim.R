@@ -3,7 +3,7 @@
 #'
 #' @param des_2be_cal is a ?survey.design object created by ?survey::svydesign
 #' @param df_or_list_sim 1 simulation of single data.frame (for joint) or single list of data.frames (for marginals)
-#' @param form_outcome formula for the outcome
+#' @param form_outcome a formula of the outcome, whose total we want an improved MCS estimate of
 #' @param form_poststrat single formula of joint poststrata or list of formulas for marginal poststrata
 #' @param type_cal either mcsp or mcsr (MCS by poststratification or raking)
 #'

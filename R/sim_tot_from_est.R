@@ -6,6 +6,8 @@
 #' @param type_strata specify if joint (requires a data.frame) or marginal requires a list
 #' @param lgl_rej_neg_sim a logical whether to reject negative simulations
 #'
+#' @details
+#'
 #' @return 1 simulation of either joint totals in a data.frame or marginal totals in a list of data.frames
 #' @export
 #'

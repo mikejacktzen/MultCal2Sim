@@ -1,7 +1,7 @@
 
 #' The 'mcs()' helper function combines the 3-steps: simulate, calibrate, combine
 #'
-#' @param des_2be_cal a survey design object that is to be calibrated see \code{\link[survey]{design}}
+#' @param des_2be_cal a survey design object that is to be calibrated see \code{\link[survey]{svydesign}}
 #' @param df_or_list_est_tot a single data.frame of estimated joint totals or list of data.frames of estimated marginal totals (and respective standard errors) see \code{\link[MultCal2Sim]{sim_tot_from_est}}
 #' @param form_outcome a formula of the outcome, whose total we want an improved MCS estimate of see \code{\link[MultCal2Sim]{cal_2_sim}}
 #' @param form_poststrat single formula of joint poststrata or list of formulas for marginal poststrata see \code{\link[MultCal2Sim]{cal_2_sim}}
@@ -10,6 +10,8 @@
 #' @param lgl_rej_neg_sim a logical whether to reject negative simulations
 #' @param parallel a logical whether to run in parallel using \code{\link[parallel]{parLapply}}
 #' @param num_core the number of cores for the parallel job
+#'
+#' @details
 #'
 #' @return a 1 row data.frame of the MCS estimate and its standard error
 #' @export
@@ -57,7 +59,7 @@ mcs = function(des_2be_cal,
                                      form_outcome=form_outcome,
                                      form_poststrat=form_poststrat,
                                      type_cal='mcsp')
-      stopCluster(cl)
+      parallel::stopCluster(cl)
 
     }
     # combine estimates
@@ -98,7 +100,7 @@ mcs = function(des_2be_cal,
                                     form_outcome=form_outcome,
                                     form_poststrat=list_form_marg,
                                     type_cal='mcsr')
-      stopCluster(cl)
+      parallel::stopCluster(cl)
 
     }
     # combine

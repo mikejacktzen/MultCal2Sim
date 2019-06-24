@@ -7,6 +7,8 @@
 #' @param form_poststrat single formula of joint poststrata or list of formulas for marginal poststrata
 #' @param type_cal either mcsp or mcsr (MCS by poststratification or raking)
 #'
+#' @details
+#'
 #' @return a list of data.frames with c("total","SE") as columns
 #' @export
 #'

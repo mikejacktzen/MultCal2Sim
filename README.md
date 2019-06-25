@@ -1,34 +1,23 @@
----
-output:
-  md_document:
-    variant: markdown_github
----
-
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "README-"
-)
-```
-
-# MultCal2Sim
+MultCal2Sim
+===========
 
 The goal of MultCal2Sim is to ...
 
-## Installation
+Installation
+------------
 
 You can install MultCal2Sim from github with:
 
-```{r gh-installation, eval = FALSE}
+``` r
 # install.packages("devtools")
 devtools::install_github("statsccpr/MultCal2Sim")
 ```
 
-## Example
+Example
+-------
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+``` r
 ## basic example code
 ```

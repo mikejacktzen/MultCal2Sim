@@ -14,21 +14,88 @@ knitr::opts_chunk$set(
 
 # MultCal2Sim
 
-The goal of MultCal2Sim is to ...
+The goal of MultCal2Sim is to perform calibration with the pre-computed estimates. MultCal2Sim will calibrate initial estimates from one data source onto reference control-totals from a second data source. There are two choices of computation tools available, post-stratification and raking. 
 
 ## Installation
 
 You can install MultCal2Sim from github with:
 
 ```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("statsccpr/MultCal2Sim")
+# install.packages('devtools')
+#library(devtools)
+devtools::install_github("laurelhz/MultCal2Sim")
+#?sim_tot_from_est
+#?cal_2_sim
+#?combine_est
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to solve a common problem. We'll use `survey::api`, a dataset providing infomation about student performance in California Schools. This dataset contains 6194 observations on 37 variables.
 
+###Step 0: Compute the Estimate Totals
 ```{r example}
-## basic example code
+
+library(survey)
+data(api,package = 'survey')
+
+form_outcome = ~enroll
+form_poststrat = ~sch.wide+both
+```
+
+```{r}
+# stratified sample via ?apistrat
+des_targ  = svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
+
+# # one-stage cluster sample via ?apiclus1
+des_2be_cal = svydesign(id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc)
+
+# helper function to compute estimated totals within joint strata
+library(MultCal2Sim)
+?est_tot_from_des_joint
+?est_tot_from_des_1marg
+
+df_targ_tot_joint = est_tot_from_des_joint(form_additive=form_poststrat,
+                                            design_refer=des_targ)
+```
+
+###Step 1:Simulate draws of the strata control totals from the referenced data source
+
+
+```{r}
+df_targ_tot_joint
+form_poststrat
+form_outcome
+des_targ
+des_2be_cal
+
+# simulate
+sim_tot_from_est(df_or_list_est_tot=df_targ_tot_joint,type_strata='joint',lgl_rej_neg_sim=TRUE)
+
+list_sim_out_joint = lapply(1:10,FUN=sim_tot_from_est,df_or_list_est_tot=df_targ_tot_joint,type_strata='joint')
+str(list_sim_out_joint,1)
+
+###S
+
+cal_2_sim(des_2be_cal=des_2be_cal,
+         df_or_list_sim=list_sim_out_joint[[1]],
+         form_outcome=form_outcome,form_poststrat=form_poststrat,
+         type_cal='mcsp')
+
+# serial
+
+list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
+                      des_2be_cal=des_2be_cal,
+                      form_outcome=form_outcome,
+                      form_poststrat=form_poststrat,
+                      type_cal='mcsp')
+str(list_cal_out_joint)
+# combine estimates
+combine_est(list_cal_out_joint)
+
+
+str(list_cal_out_joint)
+# combine estimates
+combine_est(list_cal_out_joint)
+
 ```

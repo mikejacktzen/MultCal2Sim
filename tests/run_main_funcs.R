@@ -4,7 +4,6 @@ source("R/est_tot_ref.R")
 source("R/sim_tot_from_est.R")
 source("R/cal_2_sim.R")
 source("R/combine_est.R")
-source("tests/proto_mcs_wrapper.R")
 
 # install.packages('devtools')
 # library(devtools)
@@ -65,7 +64,7 @@ list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
                       form_outcome=form_outcome,
                       form_poststrat=form_poststrat,
                       type_cal='mcsp')
-
+str(list_cal_out_joint)
 # combine estimates
 combine_est(list_cal_out_joint)
 

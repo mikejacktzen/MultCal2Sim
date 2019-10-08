@@ -250,11 +250,11 @@ des_2be_cal
 <p>The <code>sim_tot_from_est()</code> function will simulate totals from pre-existing estimates.</p>
 <pre class="r"><code>#simulate one draw
 sim_tot_from_est(df_or_list_est_tot=df_targ_tot_joint,type_strata='joint',lgl_rej_neg_sim=TRUE)
-#&gt;   sch.wide both      Freq
-#&gt; 1       No   No  996.8193
-#&gt; 2      Yes   No 1531.9737
-#&gt; 3       No  Yes    0.0000
-#&gt; 4      Yes  Yes 4012.5152
+#&gt;   sch.wide both     Freq
+#&gt; 1       No   No  970.532
+#&gt; 2      Yes   No 1131.167
+#&gt; 3       No  Yes    0.000
+#&gt; 4      Yes  Yes 3883.574
 
 # simulate 10 draws for joint totals
 list_sim_out_joint = lapply(1:10,FUN=sim_tot_from_est,df_or_list_est_tot=df_targ_tot_joint,type_strata='joint')
@@ -284,7 +284,7 @@ cal_2_sim(des_2be_cal=des_2be_cal,
          form_outcome=form_outcome,form_poststrat=form_poststrat,
          type_cal='mcsp')
 #&gt;          total       SE
-#&gt; enroll 3553757 318820.9
+#&gt; enroll 2995555 252821.8
 
 # repeat the task 10 times
 list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
@@ -296,35 +296,35 @@ list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
 str(list_cal_out_joint)
 #&gt; List of 10
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3553757
-#&gt;   ..$ SE   : num 318821
+#&gt;   ..$ total: num 3e+06
+#&gt;   ..$ SE   : num 252822
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3458234
-#&gt;   ..$ SE   : num 293874
+#&gt;   ..$ total: num 3354996
+#&gt;   ..$ SE   : num 311660
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3551161
-#&gt;   ..$ SE   : num 325259
+#&gt;   ..$ total: num 3316476
+#&gt;   ..$ SE   : num 312546
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3649476
-#&gt;   ..$ SE   : num 333158
+#&gt;   ..$ total: num 3708950
+#&gt;   ..$ SE   : num 350808
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3472923
-#&gt;   ..$ SE   : num 301609
+#&gt;   ..$ total: num 3599356
+#&gt;   ..$ SE   : num 324600
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3424178
-#&gt;   ..$ SE   : num 305155
+#&gt;   ..$ total: num 3426329
+#&gt;   ..$ SE   : num 282980
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3348372
-#&gt;   ..$ SE   : num 286391
+#&gt;   ..$ total: num 3725201
+#&gt;   ..$ SE   : num 332558
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3408018
-#&gt;   ..$ SE   : num 283846
+#&gt;   ..$ total: num 3314787
+#&gt;   ..$ SE   : num 283900
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3313857
-#&gt;   ..$ SE   : num 290866
+#&gt;   ..$ total: num 3258599
+#&gt;   ..$ SE   : num 272370
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3352531
-#&gt;   ..$ SE   : num 307084</code></pre>
+#&gt;   ..$ total: num 3449782
+#&gt;   ..$ SE   : num 301003</code></pre>
 </div>
 <div id="step-3-computing-the-final-point-estimate-and-the-standard-error" class="section level3">
 <h3>Step 3: Computing the final point estimate and the standard error</h3>
@@ -333,7 +333,7 @@ str(list_cal_out_joint)
 <pre class="r"><code># combine estimates
 combine_est(list_cal_out_joint)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3453251  324827.3 105512786831 11341135986 93037537246</code></pre>
+#&gt; 1   3415003  382502.7 146308345136 49077883283 92322673524</code></pre>
 </div>
 <div id="using-raking-tool-on-marginal-totals" class="section level3">
 <h3>Using Raking tool on marginal totals</h3>
@@ -369,14 +369,14 @@ args(sim_tot_from_est)
 #simulate one draw
 sim_tot_from_est(df_or_list_est_tot=list_targ_tot_marg,type_strata='marginal',lgl_rej_neg_sim=TRUE)
 #&gt; [[1]]
-#&gt;   sch.wide      Freq
-#&gt; 1       No  880.6058
-#&gt; 2      Yes 5116.7485
+#&gt;   sch.wide     Freq
+#&gt; 1       No 1064.383
+#&gt; 2      Yes 5174.912
 #&gt; 
 #&gt; [[2]]
 #&gt;   both     Freq
-#&gt; 1   No 2145.113
-#&gt; 2  Yes 3873.052
+#&gt; 1   No 2424.715
+#&gt; 2  Yes 3593.987
 
 #simulate 10 draws
 list_sim_out_marg = lapply(1:10,FUN=sim_tot_from_est,df_or_list_est_tot=list_targ_tot_marg,type_strata='marginal')
@@ -425,7 +425,7 @@ list_cal_out_marg = lapply(list_sim_out_marg,FUN=cal_2_sim,
 #step 3: combine the estimates and compute final uncertainty
 combine_est(list_cal_out_marg)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3452646  360781.9 130163564101 30470047358 96646512007</code></pre>
+#&gt; 1   3429854  346934.7 120363709328 24249944696 93688770163</code></pre>
 </div>
 </div>
 <div id="overall-mcs-helper" class="section level2">
@@ -438,8 +438,8 @@ mcs(des_2be_cal=des_2be_cal,
     type_cal='mcsr',
     num_sim=200,
     lgl_rej_neg_sim=TRUE)
-#&gt;   theta_mcs se_root_T       T_var           B       U_bar
-#&gt; 1   3452352  362851.2 1.31661e+11 37611571714 93861357576
+#&gt;   theta_mcs se_root_T        T_var           B       U_bar
+#&gt; 1   3431434  349120.7 121885240567 29604382513 92132836141
 
 # parallel
 mcs(des_2be_cal=des_2be_cal,
@@ -451,8 +451,8 @@ mcs(des_2be_cal=des_2be_cal,
     parallel = TRUE,
     num_core = 4,
     lgl_rej_neg_sim=TRUE)
-#&gt;   theta_mcs se_root_T       T_var           B       U_bar
-#&gt; 1   3432540  347253.6 1.20585e+11 27449246867 92998538040
+#&gt;   theta_mcs se_root_T        T_var           B       U_bar
+#&gt; 1   3436335  351322.7 123427639110 30514602178 92760463922
 
 mcs(des_2be_cal=des_2be_cal,
     df_or_list_est_tot=df_targ_tot_joint,
@@ -464,7 +464,7 @@ mcs(des_2be_cal=des_2be_cal,
     num_core = 4,
     lgl_rej_neg_sim=TRUE)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3457608  350239.2 122667472223 28650709654 93873509020
+#&gt; 1   3415111  354920.7 125968712283 34464530783 91331858846
 
 mcs(des_2be_cal=des_2be_cal,
     df_or_list_est_tot=df_targ_tot_joint,
@@ -474,7 +474,7 @@ mcs(des_2be_cal=des_2be_cal,
     num_sim=200,
     lgl_rej_neg_sim=TRUE)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3423318  353051.3 124645199966 31954542591 92530884663</code></pre>
+#&gt; 1   3421366  359009.3 128887661781 37420740444 91279817635</code></pre>
 </div>
 </div>
 

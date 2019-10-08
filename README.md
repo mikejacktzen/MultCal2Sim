@@ -83,10 +83,10 @@ des_2be_cal
 # simulate
 sim_tot_from_est(df_or_list_est_tot=df_targ_tot_joint,type_strata='joint',lgl_rej_neg_sim=TRUE)
 #>   sch.wide both     Freq
-#> 1       No   No 1418.133
-#> 2      Yes   No 1030.329
+#> 1       No   No 1119.774
+#> 2      Yes   No 1328.235
 #> 3       No  Yes    0.000
-#> 4      Yes  Yes 4145.259
+#> 4      Yes  Yes 3939.573
 
 list_sim_out_joint = lapply(1:10,FUN=sim_tot_from_est,df_or_list_est_tot=df_targ_tot_joint,type_strata='joint')
 str(list_sim_out_joint,1)
@@ -101,15 +101,17 @@ str(list_sim_out_joint,1)
 #>  $ :'data.frame':    4 obs. of  3 variables:
 #>  $ :'data.frame':    4 obs. of  3 variables:
 #>  $ :'data.frame':    4 obs. of  3 variables:
+```
 
-###S
+### Step 2: Calibrate the estimates from the first data source onto the simulated control totals
 
+``` r
 cal_2_sim(des_2be_cal=des_2be_cal,
          df_or_list_sim=list_sim_out_joint[[1]],
          form_outcome=form_outcome,form_poststrat=form_poststrat,
          type_cal='mcsp')
 #>          total     SE
-#> enroll 3242389 281510
+#> enroll 3188432 271754
 
 # serial
 
@@ -121,75 +123,80 @@ list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
 str(list_cal_out_joint)
 #> List of 10
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3242389
-#>   ..$ SE   : num 281510
+#>   ..$ total: num 3188432
+#>   ..$ SE   : num 271754
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3295231
-#>   ..$ SE   : num 285778
+#>   ..$ total: num 3302949
+#>   ..$ SE   : num 270674
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3363242
-#>   ..$ SE   : num 308814
+#>   ..$ total: num 3185587
+#>   ..$ SE   : num 294107
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3423686
-#>   ..$ SE   : num 298367
+#>   ..$ total: num 3262455
+#>   ..$ SE   : num 297726
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3545340
-#>   ..$ SE   : num 304644
+#>   ..$ total: num 3806969
+#>   ..$ SE   : num 362092
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3554326
-#>   ..$ SE   : num 309137
+#>   ..$ total: num 3596084
+#>   ..$ SE   : num 316276
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3172516
-#>   ..$ SE   : num 280007
+#>   ..$ total: num 3730425
+#>   ..$ SE   : num 333521
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3126716
-#>   ..$ SE   : num 269218
+#>   ..$ total: num 3314064
+#>   ..$ SE   : num 290398
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3850188
-#>   ..$ SE   : num 335794
+#>   ..$ total: num 3722966
+#>   ..$ SE   : num 322673
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3636357
-#>   ..$ SE   : num 320034
+#>   ..$ total: num 3308579
+#>   ..$ SE   : num 256499
+```
+
+### Step 3: Compute the final point estimate and the standard error
+
+``` r
 # combine estimates
 combine_est(list_cal_out_joint)
-#>   theta_mcs se_root_T        T_var           B       U_bar
-#> 1   3420999  382871.9 146590878792 51469754684 89974148639
+#>   theta_mcs se_root_T       T_var           B       U_bar
+#> 1   3441851    396559 1.57259e+11 59428840182 91887285513
 
 
 str(list_cal_out_joint)
 #> List of 10
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3242389
-#>   ..$ SE   : num 281510
+#>   ..$ total: num 3188432
+#>   ..$ SE   : num 271754
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3295231
-#>   ..$ SE   : num 285778
+#>   ..$ total: num 3302949
+#>   ..$ SE   : num 270674
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3363242
-#>   ..$ SE   : num 308814
+#>   ..$ total: num 3185587
+#>   ..$ SE   : num 294107
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3423686
-#>   ..$ SE   : num 298367
+#>   ..$ total: num 3262455
+#>   ..$ SE   : num 297726
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3545340
-#>   ..$ SE   : num 304644
+#>   ..$ total: num 3806969
+#>   ..$ SE   : num 362092
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3554326
-#>   ..$ SE   : num 309137
+#>   ..$ total: num 3596084
+#>   ..$ SE   : num 316276
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3172516
-#>   ..$ SE   : num 280007
+#>   ..$ total: num 3730425
+#>   ..$ SE   : num 333521
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3126716
-#>   ..$ SE   : num 269218
+#>   ..$ total: num 3314064
+#>   ..$ SE   : num 290398
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3850188
-#>   ..$ SE   : num 335794
+#>   ..$ total: num 3722966
+#>   ..$ SE   : num 322673
 #>  $ :'data.frame':    1 obs. of  2 variables:
-#>   ..$ total: num 3636357
-#>   ..$ SE   : num 320034
+#>   ..$ total: num 3308579
+#>   ..$ SE   : num 256499
 # combine estimates
 combine_est(list_cal_out_joint)
-#>   theta_mcs se_root_T        T_var           B       U_bar
-#> 1   3420999  382871.9 146590878792 51469754684 89974148639
+#>   theta_mcs se_root_T       T_var           B       U_bar
+#> 1   3441851    396559 1.57259e+11 59428840182 91887285513
 ```

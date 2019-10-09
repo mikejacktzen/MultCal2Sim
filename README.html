@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -70,7 +69,9 @@ h6 {
 </style>
 
 
+</head>
 
+<body>
 
 <style type="text/css">
 .main-container {
@@ -84,6 +85,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -94,80 +96,22 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
-summary {
-  display: list-item;
-}
 </style>
 
 
+
+<div class="container-fluid main-container">
 
 <!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
 
 <!-- code folding -->
 
 
-
-
-</head>
-
-<body>
-
-
-<div class="container-fluid main-container">
 
 
 
@@ -188,10 +132,8 @@ summary {
 <p>You can install MultCal2Sim from github with:</p>
 <pre class="r"><code># install.packages('devtools')
 #library(devtools)
-devtools::install_github(&quot;laurelhz/MultCal2Sim&quot;)
-#?sim_tot_from_est
-#?cal_2_sim
-#?combine_est</code></pre>
+devtools::install_github(&quot;statsccpr/MultCal2Sim&quot;)
+</code></pre>
 </div>
 <div id="example" class="section level2">
 <h2>Example</h2>
@@ -212,7 +154,7 @@ form_outcome = ~enroll
 form_poststrat = ~sch.wide+both</code></pre>
 <div id="step-0-computing-the-estimate-totals" class="section level3">
 <h3>Step 0: Computing the estimate totals</h3>
-<p>The Data Source 1 is <code>apisrat</code>, which is a sample stratified by type of school (Elementary/Middle/High School), and the Data Source 2 is <code>apiclus1</code>, which is a cluster sample of school districts.Our goal is to estimate</p>
+<p>The Data Source 1 is <code>apistrat</code>, which is a sample (pre) stratified by type of school (Elementary/Middle/High School), and the Data Source 2 is <code>apiclus1</code>, which is a cluster sample of school districts.Our goal is to estimate</p>
 <p><code>est_tot_from_des_joint(form_additive,design_refer)</code>: estimate joint totals from a survey design project <code>est_tot_from_des_1marg(form_1_term_only,design_refer)</code>: estimate one marginal totals from a survey design project</p>
 <pre class="r"><code>
 # stratified sample via ?apistrat
@@ -223,7 +165,7 @@ des_2be_cal = svydesign(id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc)
 
 # helper function to compute estimated totals within joint strata
 library(MultCal2Sim)
-df_targ_tot_joint= est_tot_from_des_joint(form_additive=form_poststrat,
+df_targ_tot_joint = est_tot_from_des_joint(form_additive=form_poststrat,
                                             design_refer=des_targ)</code></pre>
 <pre class="r"><code>df_targ_tot_joint
 #&gt;   sch.wide both    Freq       SE
@@ -244,22 +186,22 @@ des_2be_cal
 #&gt; With (15) clusters.
 #&gt; svydesign(id = ~dnum, weights = ~pw, data = apiclus1, fpc = ~fpc)</code></pre>
 </div>
-<div id="step-1simulating-draws-of-the-strata-control-totals-from-the-referenced-data-source" class="section level3">
-<h3>Step 1:Simulating draws of the strata control totals from the referenced data source</h3>
+<div id="step-1-simulating-draws-of-the-estimated-strata-control-totals-from-the-referenced-data-source" class="section level3">
+<h3>Step 1: Simulating draws of the estimated strata control totals from the referenced data source</h3>
 <p>m=1,2,3,…,M draws are simulated for each strata s=1,2,3,…,S in the first step.It will return one simulation of either joint totals or marginal totals in a data frame.</p>
 <p>The <code>sim_tot_from_est()</code> function will simulate totals from pre-existing estimates.</p>
 <pre class="r"><code>#simulate one draw
 sim_tot_from_est(df_or_list_est_tot=df_targ_tot_joint,type_strata='joint',lgl_rej_neg_sim=TRUE)
-#&gt;   sch.wide both     Freq
-#&gt; 1       No   No  970.532
-#&gt; 2      Yes   No 1131.167
-#&gt; 3       No  Yes    0.000
-#&gt; 4      Yes  Yes 3883.574
+#&gt;   sch.wide both      Freq
+#&gt; 1       No   No  832.0537
+#&gt; 2      Yes   No 1615.7791
+#&gt; 3       No  Yes    0.0000
+#&gt; 4      Yes  Yes 3316.5685
 
 # simulate 10 draws for joint totals
 list_sim_out_joint = lapply(1:10,FUN=sim_tot_from_est,df_or_list_est_tot=df_targ_tot_joint,type_strata='joint')
 
-# first draw
+# 10 draws
 str(list_sim_out_joint,1)
 #&gt; List of 10
 #&gt;  $ :'data.frame':    4 obs. of  3 variables:
@@ -271,7 +213,15 @@ str(list_sim_out_joint,1)
 #&gt;  $ :'data.frame':    4 obs. of  3 variables:
 #&gt;  $ :'data.frame':    4 obs. of  3 variables:
 #&gt;  $ :'data.frame':    4 obs. of  3 variables:
-#&gt;  $ :'data.frame':    4 obs. of  3 variables:</code></pre>
+#&gt;  $ :'data.frame':    4 obs. of  3 variables:
+
+# first draw
+list_sim_out_joint[[1]]
+#&gt;   sch.wide both      Freq
+#&gt; 1       No   No  952.5923
+#&gt; 2      Yes   No 1204.9495
+#&gt; 3       No  Yes    0.0000
+#&gt; 4      Yes  Yes 4130.1280</code></pre>
 </div>
 <div id="step-2-calibrating-the-estimates-from-the-first-data-source-onto-the-simulated-control-totals" class="section level3">
 <h3>Step 2: Calibrating the estimates from the first data source onto the simulated control totals</h3>
@@ -284,7 +234,7 @@ cal_2_sim(des_2be_cal=des_2be_cal,
          form_outcome=form_outcome,form_poststrat=form_poststrat,
          type_cal='mcsp')
 #&gt;          total       SE
-#&gt; enroll 2995555 252821.8
+#&gt; enroll 3481155 307948.7
 
 # repeat the task 10 times
 list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
@@ -296,47 +246,47 @@ list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
 str(list_cal_out_joint)
 #&gt; List of 10
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3e+06
-#&gt;   ..$ SE   : num 252822
+#&gt;   ..$ total: num 3481155
+#&gt;   ..$ SE   : num 307949
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3354996
-#&gt;   ..$ SE   : num 311660
+#&gt;   ..$ total: num 3800324
+#&gt;   ..$ SE   : num 342717
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3316476
-#&gt;   ..$ SE   : num 312546
+#&gt;   ..$ total: num 3269765
+#&gt;   ..$ SE   : num 285420
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3708950
-#&gt;   ..$ SE   : num 350808
+#&gt;   ..$ total: num 3616693
+#&gt;   ..$ SE   : num 287895
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3599356
-#&gt;   ..$ SE   : num 324600
+#&gt;   ..$ total: num 3377823
+#&gt;   ..$ SE   : num 295449
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3426329
-#&gt;   ..$ SE   : num 282980
+#&gt;   ..$ total: num 3762610
+#&gt;   ..$ SE   : num 330298
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3725201
-#&gt;   ..$ SE   : num 332558
+#&gt;   ..$ total: num 3637641
+#&gt;   ..$ SE   : num 321821
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3314787
-#&gt;   ..$ SE   : num 283900
+#&gt;   ..$ total: num 3711822
+#&gt;   ..$ SE   : num 338070
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3258599
-#&gt;   ..$ SE   : num 272370
+#&gt;   ..$ total: num 3294218
+#&gt;   ..$ SE   : num 286004
 #&gt;  $ :'data.frame':    1 obs. of  2 variables:
-#&gt;   ..$ total: num 3449782
-#&gt;   ..$ SE   : num 301003</code></pre>
+#&gt;   ..$ total: num 3598939
+#&gt;   ..$ SE   : num 304022</code></pre>
 </div>
 <div id="step-3-computing-the-final-point-estimate-and-the-standard-error" class="section level3">
 <h3>Step 3: Computing the final point estimate and the standard error</h3>
-<p>The final point estimate is the average of intermediate calibrations, and the standard deviaiton will be returned as well.</p>
-<p>The <code>combine_est</code>function will combine intermediate calibrated estimates</p>
+<p>The final point estimate is the average of intermediate calibrations, and the standard error will be returned as well.</p>
+<p>The <code>combine_est</code> function will combine intermediate calibrated estimates</p>
 <pre class="r"><code># combine estimates
 combine_est(list_cal_out_joint)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3415003  382502.7 146308345136 49077883283 92322673524</code></pre>
+#&gt; 1   3555099    369372 136435646550 36295125707 96511008272</code></pre>
 </div>
-<div id="using-raking-tool-on-marginal-totals" class="section level3">
-<h3>Using Raking tool on marginal totals</h3>
+<div id="using-raking-on-marginal-totals-mcsr" class="section level3">
+<h3>Using Raking on marginal totals (MCSR)</h3>
 <pre class="r"><code>
 # marginal targets
 args(est_tot_from_des_1marg)
@@ -366,22 +316,22 @@ args(sim_tot_from_est)
 #&gt; function (df_or_list_est_tot, type_strata, lgl_rej_neg_sim = TRUE) 
 #&gt; NULL
 
-#simulate one draw
+# simulate one draw of margin(s)
 sim_tot_from_est(df_or_list_est_tot=list_targ_tot_marg,type_strata='marginal',lgl_rej_neg_sim=TRUE)
 #&gt; [[1]]
 #&gt;   sch.wide     Freq
-#&gt; 1       No 1064.383
-#&gt; 2      Yes 5174.912
+#&gt; 1       No 1106.060
+#&gt; 2      Yes 5071.378
 #&gt; 
 #&gt; [[2]]
 #&gt;   both     Freq
-#&gt; 1   No 2424.715
-#&gt; 2  Yes 3593.987
+#&gt; 1   No 2110.169
+#&gt; 2  Yes 3986.046
 
-#simulate 10 draws
+# simulate 10 draws
 list_sim_out_marg = lapply(1:10,FUN=sim_tot_from_est,df_or_list_est_tot=list_targ_tot_marg,type_strata='marginal')
 
-#second draw
+# list of draws 10
 str(list_sim_out_marg,2)
 #&gt; List of 10
 #&gt;  $ :List of 2
@@ -415,7 +365,19 @@ str(list_sim_out_marg,2)
 #&gt;   ..$ :'data.frame': 2 obs. of  2 variables:
 #&gt;   ..$ :'data.frame': 2 obs. of  2 variables:
 
-#use mcsr to compute intermediate estimates
+# 5th draw
+list_sim_out_marg[[5]]
+#&gt; [[1]]
+#&gt;   sch.wide     Freq
+#&gt; 1       No 1101.103
+#&gt; 2      Yes 5029.661
+#&gt; 
+#&gt; [[2]]
+#&gt;   both     Freq
+#&gt; 1   No 2639.892
+#&gt; 2  Yes 4223.480
+
+# use mcsr to compute intermediate estimates
 list_cal_out_marg = lapply(list_sim_out_marg,FUN=cal_2_sim,
                             des_2be_cal=des_2be_cal,
                             form_outcome=form_outcome,
@@ -425,57 +387,45 @@ list_cal_out_marg = lapply(list_sim_out_marg,FUN=cal_2_sim,
 #step 3: combine the estimates and compute final uncertainty
 combine_est(list_cal_out_marg)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3429854  346934.7 120363709328 24249944696 93688770163</code></pre>
+#&gt; 1   3396591  370924.3 137584813220 41636600394 91784552787</code></pre>
 </div>
 </div>
-<div id="overall-mcs-helper" class="section level2">
-<h2>Overall MCS helper</h2>
+</div>
+<div id="overall-mcs-helper-that-wraps-together-steps-1-3" class="section level1">
+<h1>Overall MCS helper that wraps together steps 1-3</h1>
 <pre class="r"><code>
 mcs(des_2be_cal=des_2be_cal,
     df_or_list_est_tot=list_targ_tot_marg,
     form_outcome=form_outcome,
     form_poststrat=list_form_marg,
     type_cal='mcsr',
-    num_sim=200,
+    num_sim=50,
     lgl_rej_neg_sim=TRUE)
 #&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3431434  349120.7 121885240567 29604382513 92132836141
-
+#&gt; 1   3418358  344478.4 118665394141 24674506613 93497397396</code></pre>
+<p><code>?mcs</code> has a parallel option</p>
+<pre class="r"><code>
 # parallel
 mcs(des_2be_cal=des_2be_cal,
     df_or_list_est_tot=list_targ_tot_marg,
     form_outcome=form_outcome,
     form_poststrat=list_form_marg,
     type_cal='mcsr',
-    num_sim=200,
+    num_sim=50,
     parallel = TRUE,
     num_core = 4,
     lgl_rej_neg_sim=TRUE)
-#&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3436335  351322.7 123427639110 30514602178 92760463922
 
-mcs(des_2be_cal=des_2be_cal,
-    df_or_list_est_tot=df_targ_tot_joint,
-    form_outcome=form_outcome,
-    form_poststrat=form_poststrat,
-    type_cal='mcsp',
-    num_sim=200,
-    parallel = TRUE,
-    num_core = 4,
-    lgl_rej_neg_sim=TRUE)
-#&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3415111  354920.7 125968712283 34464530783 91331858846
-
-mcs(des_2be_cal=des_2be_cal,
-    df_or_list_est_tot=df_targ_tot_joint,
-    form_outcome=form_outcome,
-    form_poststrat=form_poststrat,
-    type_cal='mcsp',
-    num_sim=200,
-    lgl_rej_neg_sim=TRUE)
-#&gt;   theta_mcs se_root_T        T_var           B       U_bar
-#&gt; 1   3421366  359009.3 128887661781 37420740444 91279817635</code></pre>
-</div>
+# mcs(des_2be_cal=des_2be_cal,
+#     df_or_list_est_tot=df_targ_tot_joint,
+#     form_outcome=form_outcome,
+#     form_poststrat=form_poststrat,
+#     type_cal='mcsp',
+#     num_sim=200,
+#     parallel = TRUE,
+#     num_core = 4,
+#     lgl_rej_neg_sim=TRUE)
+</code></pre>
 </div>
 
 
@@ -495,23 +445,6 @@ $(document).ready(function () {
 
 
 </script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

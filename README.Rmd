@@ -4,9 +4,10 @@ output:
     variant: markdown_github
 ---
 
-```{r, echo = FALSE}
+```{r knitr-opts, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  cache = TRUE,
   comment = "#>",
   fig.path = "README-"
 )
@@ -14,7 +15,7 @@ knitr::opts_chunk$set(
 
 # MultCal2Sim
 
-The goal of MultCal2Sim is to perform calibration with the pre-computed estimates. MultCal2Sim will calibrate initial estimates from the first data source onto reference control-totals from the second data source. There are two choices of computation tools available, post-stratification and raking.
+The `MultCal2Sim` package for R has tools to perform calibration with pre-computed estimates. MultCal2Sim will calibrate initial estimates from the first data source onto estimated reference control-totals from the second data source. There are two choices of computation tools available, post-stratification and raking. For methodological details see [@writeupmcs].
 
 ## Installation
 
@@ -22,16 +23,15 @@ You can install MultCal2Sim from github with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages('devtools')
-#library(devtools)
+# library(devtools)
 devtools::install_github("statsccpr/MultCal2Sim")
 
 ```
-## Example
+# Examples
 
-This is a basic example which shows you how to solve a common problem. We will use `survey::api`, a dataset providing infomation about student performance in California Schools.
+We use the `survey::api` dataset that contains infomation about student performance in California Schools.
 
 ```{r api}
-
 library(survey)
 data(api,package = 'survey')
 
@@ -39,53 +39,50 @@ data(api,package = 'survey')
 form_outcome = ~enroll
 form_poststrat = ~sch.wide+both
 ```
-We want an improved estimate of the total for the outcome `enroll` where `sch.wide` and `both` are strata variables.
+We want an improved estimate of the total for the outcome `enroll` where `sch.wide` and `both` are post-strata variables.
 
 
-The Data Source 1 is `apistrat`, which is a sample (pre) stratified by type of school (Elementary/Middle/High School), and the Data Source 2 is `apiclus1`, which is a cluster sample of school districts. 
+The to-be-calibrated outcome is found in Data Source 1, `apiclus1`, which is a cluster sample of school districts. Acting as the target data source is Data Source 2, `apistrat`, which is a sample design (pre) stratified by type of school (Elementary/Middle/High School),
 
 ```{r setup-design}
-
 # stratified sample via ?apistrat
 des_targ  = svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
 
 # # one-stage cluster sample via ?apiclus1
 des_2be_cal = svydesign(id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc)
 ```
+## Poststratification
 
-## Step 0: Computing estimates for strata cell totals
+### Step 0: Computing estimates for strata cell totals
 
-If the user already has estimates for the strata cells, the user can skip to step 1. Otherwise, we have helper functions for the user to compute these strata cell estimates
+If the user already has estimates for the post-strata cells, the user can skip to step 1. Otherwise, we have helper functions for the user to compute the required post-strata cell estimates.
 
-`est_tot_from_des_joint(form_additive,design_refer)`: estimate joint totals from a survey design project
-`est_tot_from_des_1marg(form_1_term_only,design_refer)`: estimate marginal totals for a single variable from a survey design project
+`est_tot_from_des_joint(form_additive,design_refer)`: estimate joint totals from a survey design object
+`est_tot_from_des_1marg(form_1_term_only,design_refer)`: estimate marginal totals for a single variable from a survey design object
 
-We'll first focus on the poststratification method, thus requiring joint control totals. Later we'll demonstrate how the marginal totals are used for the raking method.
+We'll first focus on the MCS poststratification method, thus requiring joint control totals. Later we'll demonstrate how marginal totals are used for the MCS raking method.
 
-```{r step0_compute_est}
-
+```{r step0-precomp-est}
 # helper function to compute estimated totals within joint strata
 library(MultCal2Sim)
 df_targ_tot_joint = est_tot_from_des_joint(form_additive=form_poststrat,
                                             design_refer=des_targ)
 ```
+Going forward, we need the following objects
 
-We need the following objects
-
-```{r prepared_objects}
-df_targ_tot_joint
-form_poststrat
-form_outcome
-des_targ
-des_2be_cal
+```{r prepared-objects}
+df_targ_tot_joint  # data.frame with estimates of the post-strata cell totals
+form_poststrat  # formula specifying poststrata
+form_outcome   # formula specifying the outcome
+des_2be_cal  # survey.design object containing the outcome to be calibrated
 ```
 
-## Step 1: Simulating draws using the estimated strata control totals from the reference data source
+### Step 1: Simulating draws using the estimated strata control totals from the target data source
 
-Simulate $m=1,2,3,...,M$ draws for each strata cell $s=1,2,3,...,S$ in the first step. The `sim_tot_from_est()` function will simulate totals from pre-existing estimates. It will return one simulation of either joint totals or marginal totals in a data frame.
+Simulate $m=1,2,3,...,M$ draws for each strata cell $s=1,2,3,...,S$ in the first step. The `?sim_tot_from_est()` function will simulate totals from pre-existing estimates. It will return one simulation of either joint totals or marginal totals in a data frame.
 
-```{r step1}
-#simulate one draw
+```{r step1-sim}
+# simulate one draw
 sim_tot_from_est(df_or_list_est_tot=df_targ_tot_joint,type_strata='joint',lgl_rej_neg_sim=TRUE)
 
 # simulate 10 draws for joint totals
@@ -98,13 +95,12 @@ str(list_sim_out_joint,1)
 list_sim_out_joint[[1]]
 ```
 
-##Step 2: Calibrating the estimates from the first data source onto the simulated control totals
+### Step 2: Calibrating the estimates from the first data source onto the simulated control totals
 
-The user can pick either post-stratification or raking to calibrate the initial estimate to each draw (simulated in the step 1). The function `cal_2_sim()` will calibrate (poststratify or rake) an outcome onto simulted poststrata totals. It will return a list of multiple intermediate estimates. Here we will use post-stratification as our tool.
+The user can pick either post-stratification or raking to calibrate the initial estimate to each draw (simulated in step 1). The function `?cal_2_sim()` will calibrate (poststratify or rake) an outcome onto simulted poststrata totals. It will return a list of multiple intermediate estimates. Here we use post-stratification.
 
-```{r step2}
-
-#using mcsp to calibrate the estimate to the first draw
+```{r step2-cal}
+# using mcsp to calibrate the estimate to the first draw
 cal_2_sim(des_2be_cal=des_2be_cal,
          df_or_list_sim=list_sim_out_joint[[1]],
          form_outcome=form_outcome,form_poststrat=form_poststrat,
@@ -120,23 +116,21 @@ list_cal_out_joint = lapply(list_sim_out_joint,FUN=cal_2_sim,
 str(list_cal_out_joint)
 ```
 
-##Step 3: Computing the final point estimate and the standard error
+### Step 3: Computing the final point estimate and the standard error
 
-The `combine_est` function will combine the list of intermediate estimates (from step 2). The final point estimate is the average of intermediate calibrations, and its standard error will be returned as well.
+The `?combine_est()` function will combine the list of intermediate estimates (from step 2). The final point estimate is the average of intermediate calibrations, and its standard error will be returned as well.
 
 ```{r step3}
 # combine estimates
 combine_est(list_cal_out_joint)
-
 ```
 
 
-## Using Raking on marginal totals (MCSR)
+## Raking onto marginal totals (MCSR)
 
-Alternative to poststratification onto joint totals, we demonstrate raking onto marginal totals. For raking, we require a list whose elements are one term formula (unlike poststratification requiring one formula of terms).
+Alternative to poststratification onto joint totals, we demonstrate raking onto marginal totals. For raking, the control variable specification requires a list where each element is a one term formula (unlike poststratification requiring one formula of terms).
 
-```{r raking example}
-
+```{r raking-ex}
 # marginal targets
 args(est_tot_from_des_1marg)
 form_poststrat
@@ -148,6 +142,7 @@ form_poststrat
 
 is.list(form_poststrat)
 
+# correct, list of one term formulae
 list_form_marg = list(~sch.wide,~both)
 is.list(list_form_marg)
 
@@ -155,6 +150,7 @@ list_targ_tot_marg = lapply(list_form_marg,FUN=est_tot_from_des_1marg, design_re
 
 args(sim_tot_from_est)
 
+# step 1, simulate
 # simulate one draw of margin(s)
 sim_tot_from_est(df_or_list_est_tot=list_targ_tot_marg,type_strata='marginal',lgl_rej_neg_sim=TRUE)
 
@@ -167,21 +163,22 @@ str(list_sim_out_marg,2)
 # 5th draw
 list_sim_out_marg[[5]]
 
-# use mcsr to compute intermediate estimates
+# step 2, calibrate via mcsr to compute intermediate estimates
 list_cal_out_marg = lapply(list_sim_out_marg,FUN=cal_2_sim,
                             des_2be_cal=des_2be_cal,
                             form_outcome=form_outcome,
                             form_poststrat=list_form_marg,
                             type_cal='mcsr')
 
-#step 3: combine the estimates and compute final uncertainty
+# step 3: combine the estimates and compute final uncertainty
 combine_est(list_cal_out_marg)
 ```
 
 ## Overall MCS helper that wraps together steps 1-3
 
-```{r}
+For the data arguments, the `?mcs()` wrapper needs a survey object with the outcome to be calibrated, the precomputed estimates of the control totals, a formula of the outcome, and a formula of the poststrata controls.
 
+```{r mcs-serial}
 mcs(des_2be_cal=des_2be_cal,
     df_or_list_est_tot=list_targ_tot_marg,
     form_outcome=form_outcome,
@@ -190,13 +187,11 @@ mcs(des_2be_cal=des_2be_cal,
     num_sim=50,
     lgl_rej_neg_sim=TRUE)
 
-
 ```
 
-`?mcs` has a parallel option
+The `?mcs()` wrapper has a parallel option
 
-```{r,eval=FALSE}
-
+```{r mcs-parallel,eval=FALSE}
 # parallel
 mcs(des_2be_cal=des_2be_cal,
     df_or_list_est_tot=list_targ_tot_marg,
@@ -219,5 +214,9 @@ mcs(des_2be_cal=des_2be_cal,
 #     lgl_rej_neg_sim=TRUE)
 
 
+```
+
+```{r sess-info}
+sessionInfo()
 ```
 

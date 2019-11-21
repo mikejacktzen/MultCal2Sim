@@ -76,7 +76,7 @@ mcs = function(des_2be_cal,
     # simulate
     list_sim_out_marg = lapply(1:num_sim,
                                FUN=sim_tot_from_est,
-                               df_or_list_est_tot=list_targ_tot_marg,
+                               df_or_list_est_tot=df_or_list_est_tot,
                                type_strata='marginal')
 
     if(parallel==FALSE){

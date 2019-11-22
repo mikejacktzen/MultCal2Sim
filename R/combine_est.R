@@ -17,13 +17,18 @@ combine_est = function(list_cal){
   # check if outcome dimension is larger than 1 int/num or multiple levels of categorical
   lgl_gt_1_row = nrow(list_cal[[1]])>1
 
+  # would be nice to just use array to handle both cases,
+  # but need to differentiate use of colMeans() vs mean()
+  # easier with ifelse
+
   if(lgl_gt_1_row==FALSE){
+
+    df_mult_est_and_se = do.call(rbind,list_cal)
 
     # simple numeric 1 dim outcome
     est_outcome = df_mult_est_and_se$total
     se_est = df_mult_est_and_se$SE
 
-    df_mult_est_and_se = do.call(rbind,list_cal)
     theta_mcs = mean(df_mult_est_and_se$total)
     B_i = (est_outcome-theta_mcs)^2
     B = sum(B_i)/(M-1)
@@ -66,9 +71,9 @@ combine_est = function(list_cal){
   se_root_T = sqrt(T_var)
 
 
-  out_mcs = data.frame(outcome=rownames(list_cal[[1]]),
+  out_mcs = data.frame(name_outcome=rownames(list_cal[[1]]),
                        theta_mcs=theta_mcs,
-                       se_root_T=se_root_T,
+                       se=se_root_T,
                        T_var=T_var,
                        B=B,
                        U_bar=U_bar)

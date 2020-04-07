@@ -1,4 +1,4 @@
-
+# hi new test
 #' The cal_2_sim() function to calibrate (poststratify or rake) an outcome onto simulted poststrata totals
 #'
 #' @param des_2be_cal is a ?survey.design object created by ?survey::svydesign

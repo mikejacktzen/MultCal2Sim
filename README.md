@@ -1,7 +1,7 @@
 MultCal2Sim
 ===========
 
-The `MultCal2Sim` package for R has tools to perform calibration with pre-computed estimates. MultCal2Sim will calibrate initial estimates from the first data source onto estimated reference control-totals from the second data source. There are two choices of computation tools available, post-stratification and raking. For methodological details see \[@writeupmcs\].
+The `MultCal2Sim` package for R has tools to perform calibration with pre-computed estimates. MultCal2Sim will calibrate initial estimates from the first data source onto estimated reference control-totals from the second data source. There are two choices of computation tools available, post-stratification and raking. See presentation slides here https://ucla.box.com/v/multcal2sim-slides
 
 Installation
 ------------
